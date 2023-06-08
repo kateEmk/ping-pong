@@ -3,9 +3,9 @@
 # Run tests
 `pytest tests.py`
 # Autodiscovery
-The autodiscovery process for server registration and connection establishment using WebTransport involves the following steps:
-1. **Server Registration**. Servers register themselves with a centralized or decentralized system, providing metadata about their capabilities, location, or services.
-2. **Discovery Mechanism**. Clients request server information from a centralized authority, use decentralized protocols like multicast or peer-to-peer discovery, or query the DNS for server addresses.
-3. **Client Discovery**. Clients initiate the autodiscovery process by querying the discovery mechanism to obtain a list of available server endpoints or relevant information.
-4. **Connection Establishment**. Clients use the server information to establish connections with desired servers using the WebTransport protocol, negotiating connection parameters such as security settings and transport characteristics.
-It is important to acknowledge that the implementation specifics and precise steps may vary based on the chosen autodiscovery mechanism and the specific WebTransport library or framework utilized.
+The following stages are part of the autodiscovery procedure for registering servers and establishing connections when utilizing WebTransport:
+1. Registration of the server. With the help of metadata describing their capabilities, location, or services, servers register themselves with a centralized or decentralized system.
+2. Mechanism for Discovery. Clients can use decentralized protocols like multicast or peer-to-peer discovery, ask the DNS for server addresses, or request server information from a centralized authority.
+3. Client Research. The autodiscovery process is started by clients asking the discovery mechanism to get a list of available server endpoints or pertinent data.
+4. Establishing of the Connection. In order to connect to the desired servers using the WebTransport protocol, clients use the server information to negotiate connection details including security options and transport characteristics.
+It is crucial to recognize that the implementation details and exact procedures may change depending on the autodiscovery mechanism selected and the particular WebTransport library or framework used.
