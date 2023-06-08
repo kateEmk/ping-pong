@@ -254,6 +254,7 @@ class HttpServerProtocol(QuicConnectionProtocol):
             path = path_bytes.decode()
             self._quic._logger.info("HTTP request %s %s", method, path)
 
+            # FIXME: add a public API to retrieve peer address
             client_addr = self._http._quic._network_paths[0].addr
             client = (client_addr[0], client_addr[1])
 
@@ -357,6 +358,7 @@ async def main(
     session_ticket_store: SessionTicketStore,
     retry: bool,
 ) -> None:
+    print(f"Server is running on {args.host}:{args.port}")
     await serve(
         host,
         port,
@@ -375,7 +377,7 @@ if __name__ == "__main__":
         "app",
         type=str,
         nargs="?",
-        default="demo:app",
+        default="main:app",
         help="the ASGI application as <module>:<attribute>",
     )
     parser.add_argument(
@@ -404,31 +406,12 @@ if __name__ == "__main__":
         help="load the TLS private key from the specified file",
     )
     parser.add_argument(
-        "-l",
-        "--secrets-log",
-        type=str,
-        help="log secrets to a file, for use with Wireshark",
-    )
-    parser.add_argument(
         "-q",
         "--quic-log",
         type=str,
         help="log QUIC events to QLOG files in the specified directory",
     )
-    parser.add_argument(
-        "--retry",
-        action="store_true",
-        help="send a retry for new connections",
-    )
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="increase logging verbosity"
-    )
     args = parser.parse_args()
-
-    logging.basicConfig(
-        format="%(asctime)s %(levelname)s %(name)s %(message)s",
-        level=logging.DEBUG if args.verbose else logging.INFO,
-    )
 
     # import ASGI application
     module_str, attr_str = args.app.split(":", maxsplit=1)
@@ -441,18 +424,12 @@ if __name__ == "__main__":
     else:
         quic_logger = None
 
-    # open SSL log file
-    if args.secrets_log:
-        secrets_log_file = open(args.secrets_log, "a")
-    else:
-        secrets_log_file = None
-
     configuration = QuicConfiguration(
         alpn_protocols=H3_ALPN + H0_ALPN + ["siduck"],
         is_client=False,
         max_datagram_frame_size=65536,
         quic_logger=quic_logger,
-        secrets_log_file=secrets_log_file,
+        secrets_log_file=None,
     )
 
     # load SSL certificate and key
@@ -460,7 +437,6 @@ if __name__ == "__main__":
 
     if uvloop is not None:
         uvloop.install()
-
     try:
         asyncio.run(
             main(
@@ -468,8 +444,9 @@ if __name__ == "__main__":
                 port=args.port,
                 configuration=configuration,
                 session_ticket_store=SessionTicketStore(),
-                retry=args.retry,
+                retry=True,
             )
         )
+
     except KeyboardInterrupt:
         pass

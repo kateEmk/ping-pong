@@ -1,0 +1,5 @@
+aioquic==0.9.20
+starlette==0.27.0
+wsproto==1.2.0
+httpbin
+asgiref
